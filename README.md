@@ -4,12 +4,12 @@ piccomp is a simple bash script that compose several pictures and compile them i
 
 ## Prerequisites
 + bash
-  + It should be located in /usr/bin/ to be used by piccomp, but you can modify the shebang of this script easily to use bash located anywhere you want.
+  + It should be located in `/usr/bin/` to be used by piccomp, but you can modify the shebang of this script easily to use bash located anywhere you want.
 + some latex compiler
   + By default piccomp uses xelatex, but you can pass a compiler you prefers with the argument `--CC=xxxx`, or you can just modify the script.
   
 ## Installation
-Clone this repo and do `make install`. By default it installs piccomp to /usr/local/bin/, and if you want another location, just modify `Makefile`.
+Clone this repo and do `make install`. By default it installs piccomp to `/usr/local/bin/`, and if you want another location, just modify `Makefile`.
 
 ## Usage
 Unfortunately there are very limited ways to use this script, since it's basically for my personal use.
