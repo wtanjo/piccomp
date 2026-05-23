@@ -1,0 +1,66 @@
+#!/usr/bin/bash
+
+OUTPUT_NAME="output"
+NEXT_IS_OUTPUT=0
+CC=xelatex
+ARGS=()
+PICS=()
+
+for item in ${*}; do
+    if [ ${NEXT_IS_OUTPUT} = 1 ]; then
+        item=${item%.*}
+        OUTPUT_NAME=${item}
+        NEXT_IS_OUTPUT=0
+        continue
+    fi
+    if [ ${item} = "-o" ]; then
+        NEXT_IS_OUTPUT=1
+        continue
+    fi
+    if [[ ${item} =~ ^--CC= ]]; then
+        item=${item##*=}
+        CC=${item}
+        continue
+    fi
+    if [[ ${item} =~ ^- ]]; then
+        ARGS+=(${item})
+        continue
+    fi
+    if ! [ -f ${item} ]; then
+        echo "File '${item}' does not exist."
+        exit 69
+    fi
+    
+    case ${item} in
+        *.png|*.jpg|*.jpeg|*.gif)
+            PICS+=(${item})
+            ;;
+        *)
+            echo "File '${item}' is not a picture."
+            exit 91
+            ;;
+    esac
+done
+
+if [ -f ${OUTPUT_NAME}.tex ]; then
+    rm ${OUTPUT_NAME}.tex
+fi
+
+echo '\documentclass{article}' >> ${OUTPUT_NAME}.tex
+echo '\usepackage{graphicx}' >> ${OUTPUT_NAME}.tex
+echo >> ${OUTPUT_NAME}.tex
+
+echo '\begin{document}' >> ${OUTPUT_NAME}.tex
+echo >> ${OUTPUT_NAME}.tex
+
+for item in ${PICS[@]}; do
+    echo "\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=1.0\textwidth]{${item}}
+\end{figure}" >> ${OUTPUT_NAME}.tex
+    echo >> ${OUTPUT_NAME}.tex
+done
+
+echo '\end{document}' >> ${OUTPUT_NAME}.tex
+
+${CC} ${OUTPUT_NAME}.tex ${ARGS[@]}
