@@ -16,3 +16,4 @@ Unfortunately there are very limited ways to use this script, since it's basical
 ```
 piccomp [PIC1 PIC2 PIC3 ...] [-o xxxx.xxxx] [--CC=xxxx]
 ```
+But it keeps the tex file, so you can just modify the tex file for more capabilities.
