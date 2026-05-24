@@ -12,8 +12,8 @@ piccomp is a simple bash script that compose several pictures and compile them i
 Clone this repo and do `make install`. By default it installs piccomp to `/usr/local/bin/`, and if you want another location, just modify `Makefile`.
 
 ## Usage
-Unfortunately there are very limited ways to use this script, since it's basically for my personal use.
+Unfortunately there are very limited ways to use this script, since it's basically for my personal use. But it keeps the tex file, so you can just modify the tex file for more capabilities.
 ```
 piccomp [PIC1 PIC2 PIC3 ...] [-o xxxx.xxxx] [--CC=xxxx]
 ```
-But it keeps the tex file, so you can just modify the tex file for more capabilities.
+You can use `*.png` or `./*.jpg` or something similar for the PIC arguments.

@@ -6,7 +6,7 @@ CC=xelatex
 ARGS=()
 PICS=()
 
-for item in ${*}; do
+for item in "$@"; do
     if [ ${NEXT_IS_OUTPUT} = 1 ]; then
         item=${item%.*}
         OUTPUT_NAME=${item}
@@ -26,17 +26,34 @@ for item in ${*}; do
         ARGS+=(${item})
         continue
     fi
+    if [[ ${item} =~ ^(./)?\*. ]]; then
+        suffix=${item##*.}
+        case ${suffix} in
+            png|jpg|jpeg|gif)
+            ;;
+            *)
+                printf "Suffix '%s' is not for pictures.\n" ${suffix}
+                exit 91
+                ;;
+        esac
+
+        while IFS= read -r -d '' file; do
+            PICS+=("$file")
+        done < <(find . -type f -name "*.${suffix}" -print0)
+        
+        continue
+    fi
     if ! [ -f ${item} ]; then
-        echo "File '${item}' does not exist."
+        printf "File '%s' does not exist.\n" ${item}
         exit 69
     fi
-    
+
     case ${item} in
         *.png|*.jpg|*.jpeg|*.gif)
             PICS+=(${item})
             ;;
         *)
-            echo "File '${item}' is not a picture."
+            printf "File '%s' is not a picture.\n" ${item}
             exit 91
             ;;
     esac
@@ -46,21 +63,21 @@ if [ -f ${OUTPUT_NAME}.tex ]; then
     rm ${OUTPUT_NAME}.tex
 fi
 
-echo '\documentclass{article}' >> ${OUTPUT_NAME}.tex
-echo '\usepackage{graphicx}' >> ${OUTPUT_NAME}.tex
-echo >> ${OUTPUT_NAME}.tex
+printf '\\documentclass{article}\n' >> ${OUTPUT_NAME}.tex
+printf '\\usepackage{graphicx}\n' >> ${OUTPUT_NAME}.tex
+printf '\n' >> ${OUTPUT_NAME}.tex
 
-echo '\begin{document}' >> ${OUTPUT_NAME}.tex
-echo >> ${OUTPUT_NAME}.tex
+printf '\\begin{document}\n' >> ${OUTPUT_NAME}.tex
+printf '\n' >> ${OUTPUT_NAME}.tex
 
 for item in ${PICS[@]}; do
-    echo "\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=1.0\textwidth]{${item}}
-\end{figure}" >> ${OUTPUT_NAME}.tex
-    echo >> ${OUTPUT_NAME}.tex
+    printf '\\begin{figure}[htbp]
+  \\centering
+  \\includegraphics[width=1.0\\textwidth]{%s}
+\\end{figure}\n' ${item} >> ${OUTPUT_NAME}.tex
+    printf '\n' >> ${OUTPUT_NAME}.tex
 done
 
-echo '\end{document}' >> ${OUTPUT_NAME}.tex
+printf '\\end{document}\n' >> ${OUTPUT_NAME}.tex
 
 ${CC} ${OUTPUT_NAME}.tex ${ARGS[@]}
